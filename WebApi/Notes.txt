@@ -1,0 +1,13 @@
+﻿//Error codes
+
+100000-100099 Global errors (related to players)
+
+100100-100199 (related to matches)
+
+100200-100299 (related to sets)
+
+100300-100399 (related to games)
+
+100400-100499 (related to venue)
+
+100500-100599 (related to venue)
