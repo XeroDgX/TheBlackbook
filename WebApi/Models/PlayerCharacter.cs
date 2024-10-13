@@ -6,7 +6,7 @@
         public int PlayerId { get; set; }
         public int GameId { get; set; }
         public int CharacterId { get; set; }
-        public  bool IsMain { get; set; }
+        public bool IsMain { get; set; }
 
     }
 }

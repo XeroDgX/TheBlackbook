@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace WebApi.Enums
+﻿namespace WebApi.Enums
 {
     public enum ErrorCode
     {
@@ -10,12 +8,22 @@ namespace WebApi.Enums
         PlayerOneNoExists = 100001,
 
         PlayerTwoNoExists = 100002,
+
+        PlayerNotCreated = 100003,
+
+        PlayerNoExists = 100004,
         #endregion
 
         #region Matches
         MissingMatches = 100100,
 
         ExtraMatches = 100101,
+        #endregion
+
+        #region Sets
+        SetNotCreated = 100200,
+
+        InvalidSetId = 100201,
         #endregion
 
         #region Characters
@@ -26,6 +34,8 @@ namespace WebApi.Enums
         CharacterAlreadyExists = 100502,
 
         CharacterNotCreated = 100503,
+
+        NoCharactersFound = 100504,
         #endregion
 
         #region Games

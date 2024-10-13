@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using WebApi.Interfaces;
 using WebApi.Models;
 
@@ -16,24 +15,24 @@ namespace WebApi.Controllers
             _gameService = gameService;
         }
 
-        [HttpPost("CreateGame")]
+        [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] Game game)
         {
-            if(!ModelState.IsValid) 
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var result = await _gameService.CreateGame(game);
-            if(result.IsSuccess)
+            if (result.IsSuccess)
                 return Ok(result.Data);
-            else  if(result.ErrorResponse != null)
+            else if (result.ErrorResponse != null)
                 return Ok(result.ErrorResponse);
-            else if (string.IsNullOrEmpty(result.ExceptionMessage))
+            else if (!string.IsNullOrEmpty(result.ExceptionMessage))
                 return BadRequest(result.ExceptionMessage);
             else
                 return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        [HttpGet("GetGameById")]
-        public async Task<IActionResult> GetById([FromQuery] int id, [FromQuery]bool onlyActiveGames)
+        [HttpGet("GetById")]
+        public async Task<IActionResult> GetById([FromQuery] int id, [FromQuery] bool onlyActiveGames)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -42,13 +41,13 @@ namespace WebApi.Controllers
                 return Ok(result.Data);
             else if (result.ErrorResponse != null)
                 return Ok(result.ErrorResponse);
-            else if (string.IsNullOrEmpty(result.ExceptionMessage)) 
+            else if (string.IsNullOrEmpty(result.ExceptionMessage))
                 return BadRequest(result.ExceptionMessage);
             else
                 return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        [HttpGet("GetGamesByName")]
+        [HttpGet("GetByName")]
         public async Task<IActionResult> GetByName([FromQuery] string name, [FromQuery] bool onlyActiveGames)
         {
             if (!ModelState.IsValid)
@@ -64,7 +63,7 @@ namespace WebApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        [HttpGet("GetAllGames")]
+        [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll([FromQuery] bool onlyActiveGames = true)
         {
             if (!ModelState.IsValid)
@@ -80,8 +79,8 @@ namespace WebApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        [HttpGet("DoesGameExists")]
-        public async Task<IActionResult> GetAll([FromQuery] int id )
+        [HttpGet("DoesExists/{id}")]
+        public async Task<IActionResult> DoesExists([FromRoute] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -94,6 +93,18 @@ namespace WebApi.Controllers
                 return BadRequest(result.ExceptionMessage);
             else
                 return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        [HttpPost("EditGame")]
+        public async Task<IActionResult> EditGame([FromBody] Game game)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var result = await _gameService.EditGame(game);
+            if(result.IsSuccess)
+                return Ok(result.Data);
+            else
+                return BadRequest(result.ErrorResponse);
         }
     }
 }

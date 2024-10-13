@@ -51,6 +51,10 @@
     {
       "errorCode": 100503,
       "message": "Character could not be created."
+    },
+    {
+      "errorCode": 100504,
+      "message": "Characters could not be found."
     }
   ]
 }

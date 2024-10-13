@@ -15,12 +15,15 @@ namespace WebApi.Structs
             Data = v;
             ErrorResponse = error;
             _success = success;
+            ExceptionMessage = null!;
         }
 
         private Result(Exception error, bool success)
         {
             ExceptionMessage = error.Message;
             _success = success;
+            Data = default!;
+            ErrorResponse = null!;
         }
 
         public bool IsSuccess => _success;
@@ -43,11 +46,5 @@ namespace WebApi.Structs
         public static implicit operator Result<T>(T v) => new(v, default!, true);
         public static implicit operator Result<T>(List<ErrorMessage> e) => new(default!, e, false);
         public static implicit operator Result<T>(Exception e) => new(e, false);
-
-        private R Match<R>(
-                Func<T, R> success,
-                Func<string, R> exception,
-                Func<List<ErrorMessage>, R> failure) =>
-            _success ? success(Data) : ExceptionMessage is not null? exception(ExceptionMessage):  failure(ErrorResponse);
     }
 }

@@ -8,14 +8,9 @@ using WebApi.Structs;
 
 namespace WebApi.Services
 {
-    public class GameService : IGameService
+    public class GameService(TheBlackbookContext context) : IGameService
     {
-        private readonly TheBlackbookContext _context;
-
-        public GameService(TheBlackbookContext context)
-        {
-            _context = context;
-        }
+        private readonly TheBlackbookContext _context = context;
 
         public async Task<Result<bool>> CreateGame(Game game)
         {
@@ -60,11 +55,15 @@ namespace WebApi.Services
             }
         }
 
-        public async Task<Result<Game>> GetGameById(int id, bool onlyActiveGames = true)
+        public async Task<Result<Game>> GetGameById(int id, bool onlyActiveGames)
         {
             try
             {
-                var game = await _context.Games.FindAsync(id);
+                Game? game = null;
+                if (onlyActiveGames)
+                    game = await _context.Games.FirstOrDefaultAsync(x=> x.Id == id && x.IsActive);
+                else
+                    game = await _context.Games.FirstOrDefaultAsync(x => x.Id == id);
                 if (game == null)
                     return ErrorMessagesHelper.GetErrorMessage(ErrorCode.GameNoExists);
                 else
@@ -76,16 +75,16 @@ namespace WebApi.Services
             }
         }
 
-        public async Task<Result<List<Game>>> GetGamesByName(string name, bool onlyActiveGames = true)
+        public async Task<Result<List<Game>>> GetGamesByName(string name, bool onlyActiveGames)
         {
             try
             {
                 List<Game> games;
                 if (onlyActiveGames)
-                    games = await _context.Games.Where(x => x.IsActive).ToListAsync();
+                    games = await _context.Games.Where(x => x.Title.Contains(name) && x.IsActive).ToListAsync();
                 else
-                    games = await _context.Games.ToListAsync();
-                if (games is null || games.Count > 0)
+                    games = await _context.Games.Where(x => x.Title.Contains(name)).ToListAsync();
+                if (games is null || games.Count == 0)
                     if (onlyActiveGames)
                         return ErrorMessagesHelper.GetErrorMessage(ErrorCode.NoActiveGamesSearchCriteria);
                     else
@@ -98,6 +97,13 @@ namespace WebApi.Services
 
                 return ex;
             }
+        }
+
+        public async Task<Result<bool>> EditGame(Game game)
+        {
+            _context.Update(game);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
         }
     }
 }
