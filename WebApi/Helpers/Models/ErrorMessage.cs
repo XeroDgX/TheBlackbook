@@ -5,10 +5,10 @@ namespace WebApi.Helpers.Models
     [DataContract]
     public class ErrorMessage
     {
-        [DataMember (Name = "errorCode")]
+        [DataMember(Name = "errorCode")]
         public required int ErrorCode { get; set; }
 
-        [DataMember (Name = "message")]
+        [DataMember(Name = "message")]
         public required string Message { get; set; }
     }
 }

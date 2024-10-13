@@ -6,9 +6,9 @@
         public int SetId { get; set; }
         public int MatchNumber { get; set; }
         public int PlayerOneCharacterId { get; set; }
-        public bool IsPlayerOneCharacterMain { get; set; }
+        public bool IsPlayerOneMainCharacter { get; set; }
         public int PlayerTwoCharacterId { get; set; }
-        public bool IsPlayerTwoCharacterMain { get; set; }
+        public bool IsPlayerTwoMainCharacter { get; set; }
         public int MatchWinnerPlayerId { get; set; }
     }
 }

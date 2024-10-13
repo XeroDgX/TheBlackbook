@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Text.Json.Serialization;
-using WebApi.Enums;
+﻿using WebApi.Enums;
 using WebApi.Helpers.Models;
 
 namespace WebApi.Helper
@@ -17,7 +15,7 @@ namespace WebApi.Helper
             List<ErrorMessage> errors = [];
             foreach (ErrorCode errorCode in errorCodes.Order())
             {
-                var errorMessage = ErrorMessagesCache.Messages.FirstOrDefault(x=> x.ErrorCode == (int)errorCode);
+                var errorMessage = ErrorMessagesCache.Messages.FirstOrDefault(x => x.ErrorCode == (int)errorCode);
                 if (errorMessage != null)
                     errors.Add(errorMessage);
             }

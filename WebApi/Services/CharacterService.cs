@@ -8,17 +8,11 @@ using WebApi.Structs;
 
 namespace WebApi.Services
 {
-    public class CharacterService : ICharacterService
+    public class CharacterService(TheBlackbookContext context, IGameService gameService) : ICharacterService
     {
-        private readonly TheBlackbookContext _context;
-        private readonly IGameService _gameService;
+        private readonly TheBlackbookContext _context = context;
+        private readonly IGameService _gameService = gameService;
 
-        public CharacterService(TheBlackbookContext context, IGameService gameService)
-        {
-            _context = context;
-            _gameService = gameService;
-
-        }
         public async Task<Result<bool>> CreateCharacter(Character character)
         {
             try
@@ -29,10 +23,10 @@ namespace WebApi.Services
                     return ErrorMessagesHelper.GetErrorMessage(ErrorCode.CharacterAlreadyExists);
                 _context.Characters.Add(character);
                 int affectedRows = await _context.SaveChangesAsync();
-                if (affectedRows != 1)
-                    return ErrorMessagesHelper.GetErrorMessage(ErrorCode.CharacterNotCreated);
-                else
+                if (affectedRows == 1)
                     return true;
+                else
+                    return ErrorMessagesHelper.GetErrorMessage(ErrorCode.CharacterNotCreated);
             }
             catch (Exception ex)
             {
@@ -40,9 +34,20 @@ namespace WebApi.Services
             }
         }
 
-        public Task<Result<List<Character>>> GetAllCharactersByGameId(int gameId)
+        public async Task<Result<List<Character>>> GetAllCharactersByGameId(int gameId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<Character> characters = await _context.Characters.Where(x => x.GameId == gameId).ToListAsync();
+                if (characters.Count > 0)
+                    return characters;
+                else
+                    return ErrorMessagesHelper.GetErrorMessage(ErrorCode.NoCharactersFound);
+            }
+            catch (Exception ex)
+            {
+                return ex;
+            }
         }
 
         public Task<Result<Character>> GetCharacterById(int id)
@@ -50,7 +55,7 @@ namespace WebApi.Services
             throw new NotImplementedException();
         }
 
-        public Task<Result<List<Character>>> GetCharactersByName(string name, int gameId)
+        public Task<Result<List<Character>>> GetCharactersByName(string name)
         {
             throw new NotImplementedException();
         }

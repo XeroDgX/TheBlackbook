@@ -1,6 +1,5 @@
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using WebApi.Data;
 using WebApi.Helpers.Models;
 using WebApi.Interfaces;
@@ -23,7 +22,6 @@ namespace WebApi
             builder.Services.AddScoped<ISetService, SetService>();
             builder.Services.AddScoped<IPlayerService, PlayerService>();
             builder.Services.AddScoped<IGameService, GameService>();
-
 
             builder.Services.AddDbContext<TheBlackbookContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TheBlackbookDatabase")));
 
@@ -48,13 +46,17 @@ namespace WebApi
 
 
             var app = builder.Build();
-
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var dbContext = scope.ServiceProvider.GetRequiredService<TheBlackbookContext>();
+            //    dbContext.Database.EnsureCreated();
+            //}
 
             app.UseHttpsRedirection();
 

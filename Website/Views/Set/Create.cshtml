@@ -1,0 +1,207 @@
+﻿@model Website.Models.Set
+
+@{
+    ViewData["Title"] = "Create";
+}
+<!-- //TODO::this is to do comment -->
+<h1>Create</h1>
+
+<h4>Set</h4>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlayerOneId" class="control-label"></label>
+                <input asp-for="PlayerOneId" class="form-control" />
+                <span asp-validation-for="PlayerOneId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlayerTwoId" class="control-label"></label>
+                <input asp-for="PlayerTwoId" class="form-control" />
+                <span asp-validation-for="PlayerTwoId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GameId" class="control-label"></label>
+                <input asp-for="GameId" class="form-control" />
+                <span asp-validation-for="GameId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsOffline" /> @Html.DisplayNameFor(model => model.IsOffline)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsTournament" /> @Html.DisplayNameFor(model => model.IsTournament)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsMoneyMatch" /> @Html.DisplayNameFor(model => model.IsMoneyMatch)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsLockedCharacters" /> @Html.DisplayNameFor(model => model.IsLockedCharacters)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="MatchesToWin" class="control-label"></label>
+                <input asp-for="MatchesToWin" class="form-control" />
+                <span asp-validation-for="MatchesToWin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WinnerPlayerId" class="control-label"></label>
+                <input asp-for="WinnerPlayerId" class="form-control" />
+                <span asp-validation-for="WinnerPlayerId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            @{ //TODO: Move the SetMathes complete logic to a partial view. 
+               //TODO: Validate that there are not more won matches than specified in the Set.  
+               //TODO: Create a live lookup of players while typing
+               //TODO: Decide if change characters input to a dropdownlist or a live lookup
+               //TODO: Create a logic to either repeteat last SetMatch input or select how many times that SetMatch should be repeated without breaking the rule max won matches.
+            }
+            <div class="form-group">
+                <table id='setMatches'>
+                    <thead>
+                        <tr>
+                            <th style="width:150px">Match Number</th>
+                            <th style="width:150px">P1 Character</th>
+                            <th style="width:150px">P1 Main Character</th>
+                            <th style="width:150px">P2 Character</th>
+                            <th style="width:150px">P2 Main Character</th>
+                            <th style="width:150px">Match Winner</th>
+                            <th style="width:150px">Placeholder</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="noContentRow" style="display: none;">
+                            <td colspan="7" class="no-content-message">No content available</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td><input type="text" class="form-control" id="txtPlayerOneCharacter" /></td>
+                            <td><input type="checkbox" class="form-check-input" id="chkIsPlayerOneMainCharacter" /></td>
+                            <td><input type="text" class="form-control" id="txtPlayerTwoCharacter" /></td>
+                            <td><input type="checkbox" class="form-check-input" id="chkIsPlayerTwoMainCharacter" /></td>
+                            <td><input type="text" class="form-control" id="txtMatchWinnerPlayerId" /></td>
+                            <td><input type="button" class="btn-sm" id="btnAdd" value="Add" /></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <input type="button" id="btnSave" value="Save All" />
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            checkTableContent();
+        });
+
+        $("body").on("click", "#btnAdd", function () {
+            $("#setMatches tbody tr:last input").attr("disabled", "disabled");
+            var txtPlayerOneCharacter = $("#txtPlayerOneCharacter");
+            var chkIsPlayerOneMainCharacter = $("#chkIsPlayerOneMainCharacter");
+            var txtPlayerTwoCharacter = $("#txtPlayerTwoCharacter");
+            var chkIsPlayerTwoMainCharacter = $("#chkIsPlayerTwoMainCharacter");
+            var txtMatchWinnerPlayerId = $("#txtMatchWinnerPlayerId");
+            var tBody = $("#setMatches > TBODY")[0];
+            var matchNumber = $("#setMatches > tbody > tr").length;
+            var row = tBody.insertRow(-1);
+            var cell = $(row.insertCell(-1));
+            cell.html(matchNumber);
+            cell = $(row.insertCell(-1));
+            cell.html(txtPlayerOneCharacter.val());
+            cell = $(row.insertCell(-1));
+            cell.html(chkIsPlayerOneMainCharacter.is(':checked'));
+            cell = $(row.insertCell(-1));
+            cell.html(txtPlayerTwoCharacter.val());
+            cell = $(row.insertCell(-1));
+            cell.html(chkIsPlayerTwoMainCharacter.is(':checked'));
+            cell = $(row.insertCell(-1));
+            cell.html(txtMatchWinnerPlayerId.val());
+            cell = $(row.insertCell(-1));
+            var btnRemove = $("<input />");
+            btnRemove.attr("type", "button");
+            btnRemove.attr("onclick", "remove(this);");
+            btnRemove.val("Remove");
+            cell.append(btnRemove);
+            txtPlayerOneCharacter.val("");
+            chkIsPlayerOneMainCharacter.prop("checked", false);
+            txtPlayerTwoCharacter.val("");
+            chkIsPlayerTwoMainCharacter.prop("checked", false);
+            txtMatchWinnerPlayerId.val("");
+            checkTableContent();
+        });
+
+        function remove(button) {
+            var row = $(button).closest("TR");
+            var name = $("TD", row).eq(0).html();
+            var table = $("#setMatches")[0];
+            table.deleteRow(row[0].rowIndex);
+            $("#setMatches tbody tr:last input").removeAttr("disabled");
+            checkTableContent();
+        };
+
+        function checkTableContent() {
+            const tableBody = document.querySelector('#setMatches tbody');
+            const noContentRow = document.getElementById('noContentRow');
+
+            noContentRow.style.display = tableBody.rows.length > 1 ? 'none' : 'table-row';
+        }
+
+        $("body").on("click", "#btnSave", function () {
+            var setMatches = new Array();
+            $("#setMatches TBODY TR").each(function () {
+                var row = $(this);
+                if (row.id !== 'noContentRow') {
+                    var setMatch = {};
+                    setMatch.MatchNumber = row.find("TD").eq(0).html();
+                    setMatch.PlayerOneCharacterId = row.find("TD").eq(1).html();
+                    setMatch.IsPlayerOneMainCharacter = row.find("TD").eq(2).html();
+                    setMatch.PlayerTwoCharacterId = row.find("TD").eq(3).html();
+                    setMatch.IsPlayerTwoMainCharacter = row.find("TD").eq(4).html();
+                    setMatch.MatchWinnerPlayerId = row.find("TD").eq(5).html();
+                    setMatches.push(setMatch);
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: "/Set/Create",
+                data: JSON.stringify(setMatches),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (r) {
+                    alert(r + " record(s) inserted.");
+                }
+            });
+        });
+
+
+    </script>
+}
